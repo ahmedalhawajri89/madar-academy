@@ -4,6 +4,7 @@ import { useLang } from '../../i18n/LangContext'
 import { shared } from '../../i18n/content'
 import { gsap, MQ, prefersReducedMotion, ScrollTrigger, useGSAP } from '../../lib/gsap'
 import { HERO_SHAPES } from '../../lib/heroShapes'
+import { onIntro } from '../../lib/intro'
 import { ParticleField } from '../../lib/particles'
 import { scrollToId } from '../../lib/scroll'
 import { Button } from '../ui/Button'
@@ -50,9 +51,10 @@ export function Hero() {
         field.strew()
         field.start()
 
-        // Intro: particles gather into the Madar logo while the copy rises, then the field cycle begins
-        gsap
-          .timeline({ defaults: { ease: 'expo.out', duration: 1 } })
+        // Intro: particles gather into the Madar logo while the copy rises, then the field cycle begins.
+        // Held until the opening title (preloader) lifts.
+        const intro = gsap
+          .timeline({ paused: true, defaults: { ease: 'madar.out', duration: 1 } })
           .call(() => field.morphTo(0, 2.2), [], 0.1)
           .from('.hero-eyebrow', { y: 20, autoAlpha: 0 }, 0.2)
           .from('.hero-line', { yPercent: 115, duration: 1.2, stagger: 0.12 }, 0.3)
@@ -63,6 +65,7 @@ export function Hero() {
           .from('.hero-ui', { y: 16, autoAlpha: 0 }, 1.5)
           .from('.float-card', { y: 30, autoAlpha: 0, scale: 0.92, stagger: 0.15, ease: 'back.out(1.4)' }, 1.7)
           .call(() => goTo(0, true), [], 3)
+        const offIntro = onIntro(() => intro.play())
 
         gsap.to('.hero-orbit', { rotation: 360, duration: 120, repeat: -1, ease: 'none', svgOrigin: '50 50' })
 
@@ -89,6 +92,25 @@ export function Hero() {
           scrub: true,
           onUpdate: (self) => field.setScatter(self.progress),
         })
+        return offIntro
+      })
+
+      // Scene change (desktop): the hero holds still and recedes into the dark — smaller, rounded,
+      // dimmed — while the next chapter slides over it like a new shot.
+      mm.add(MQ.desktop, () => {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: section.parentElement,
+              start: 'bottom bottom',
+              end: '+=100%',
+              pin: true,
+              pinSpacing: false,
+              scrub: true,
+            },
+          })
+          .to(section, { scale: 0.86, borderRadius: 48, yPercent: -4, ease: 'none' }, 0)
+          .to('.hero-dim', { opacity: 0.55, ease: 'none' }, 0)
       })
 
       mm.add(MQ.reduce, () => {
@@ -194,7 +216,9 @@ export function Hero() {
   }
 
   return (
-    <section id="top" ref={ref} className="relative isolate overflow-hidden bg-ivory pb-16 pt-28 md:pt-32 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-20">
+    <div className="hero-shell bg-ink">
+    <section id="top" ref={ref} className="relative isolate origin-top overflow-hidden bg-ivory pb-16 pt-28 md:pt-32 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-20">
+      <div aria-hidden className="hero-dim pointer-events-none absolute inset-0 z-30 bg-ink opacity-0" />
       <div
         aria-hidden
         className="hero-glow pointer-events-none absolute end-[22%] top-[45%] -z-10 size-[760px] -translate-y-1/2 rounded-full ltr:translate-x-1/2 rtl:-translate-x-1/2"
@@ -318,6 +342,7 @@ export function Hero() {
         </span>
       </button>
     </section>
+    </div>
   )
 }
 

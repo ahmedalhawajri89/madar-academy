@@ -80,7 +80,7 @@ export function Journey() {
   )
 
   return (
-    <section ref={ref} className="bg-paper py-24 md:py-32">
+    <section id="journey" ref={ref} className="bg-paper py-24 md:py-32">
       <div className="container-x">
         <SectionHeading eyebrow={j.eyebrow} title={j.title} align="center" />
 

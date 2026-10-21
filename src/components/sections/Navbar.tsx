@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Languages, Menu, X } from 'lucide-react'
 import { useLang } from '../../i18n/LangContext'
 import { shared } from '../../i18n/content'
 import { gsap, MQ, prefersReducedMotion, ScrollTrigger, useGSAP } from '../../lib/gsap'
-import { lockScroll, scrollToId } from '../../lib/scroll'
+import { onIntro } from '../../lib/intro'
+import { jumpToId, lockScroll } from '../../lib/scroll'
+import { useTravel } from '../../hooks/useTravel'
 import { Button } from '../ui/Button'
 import { Logo, Social } from '../ui/Icons'
 
@@ -14,8 +16,13 @@ export function Navbar() {
   const menuBtnRef = useRef<HTMLButtonElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const openRef = useRef(false)
+  const pillRef = useRef<HTMLSpanElement>(null)
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
+  const pillShown = useRef(false)
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [current, setCurrent] = useState<string | null>(null)
+  const travel = useTravel()
 
   // Glass state on scroll + hide on scroll down / reveal on scroll up
   useGSAP(
@@ -23,8 +30,24 @@ export function Navbar() {
       const nav = navRef.current!
       const mm = gsap.matchMedia()
       mm.add(MQ.motion, () => {
-        gsap.from(nav, { yPercent: -120, duration: 1, delay: 0.3, ease: 'expo.out' })
+        const enter = gsap.from(nav, { yPercent: -120, duration: 1.2, delay: 0.4, ease: 'madar.out', paused: true })
+        return onIntro(() => enter.play())
       })
+
+      // Scroll-spy: which chapter of the nav is on screen
+      t.nav.links.forEach((l) => {
+        const section = document.getElementById(l.id)
+        if (!section) return
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top 45%',
+          end: 'bottom 45%',
+          refreshPriority: -1, // measured after pinned scenes
+          onToggle: (self) => setCurrent((c) => (self.isActive ? l.id : c === l.id ? null : c)),
+        })
+      })
+
+      const progress = nav.querySelector('.nav-progress')
       ScrollTrigger.create({
         start: 0,
         end: 'max',
@@ -33,6 +56,7 @@ export function Navbar() {
         onUpdate(self) {
           const y = self.scroll()
           setScrolled(y > 40)
+          gsap.set(progress, { scaleX: self.progress })
           if (openRef.current || prefersReducedMotion()) return
           if (self.direction === 1 && y > 360) gsap.to(nav, { yPercent: -130, duration: 0.45, ease: 'power2.out', overwrite: 'auto' })
           else if (self.direction === -1) gsap.to(nav, { yPercent: 0, duration: 0.45, ease: 'power2.out', overwrite: 'auto' })
@@ -89,10 +113,31 @@ export function Navbar() {
 
   useEffect(() => () => lockScroll(false), [])
 
+  // Active-chapter pill glides between links
+  useLayoutEffect(() => {
+    const pill = pillRef.current
+    const link = current ? linkRefs.current[current] : null
+    if (!pill) return
+    if (!link) {
+      pillShown.current = false
+      gsap.to(pill, { autoAlpha: 0, scale: 0.8, duration: 0.3 })
+      return
+    }
+    // First appearance snaps into place; afterwards it glides from link to link
+    gsap[pillShown.current ? 'to' : 'set'](pill, { x: link.offsetLeft, width: link.offsetWidth, duration: 0.6, ease: 'madar.out' })
+    pillShown.current = true
+    gsap.to(pill, { autoAlpha: 1, scale: 1, duration: 0.4 })
+  }, [current])
+
   const go = (e: MouseEvent, id: string) => {
     e.preventDefault()
-    if (openRef.current) setMenu(false)
-    scrollToId(id)
+    if (openRef.current) {
+      // The full-screen menu is already a curtain: jump behind it, then lift it
+      jumpToId(id)
+      setMenu(false)
+      return
+    }
+    travel(id)
   }
 
   return (
@@ -101,7 +146,7 @@ export function Navbar() {
         <div className="container-x">
           <nav
             aria-label="Main"
-            className={`flex h-16 items-center justify-between gap-4 rounded-full ps-4 pe-2 transition-[background-color,box-shadow,color] duration-500 md:ps-6 ${
+            className={`relative flex h-16 items-center justify-between gap-4 rounded-full ps-4 pe-2 transition-[background-color,box-shadow,color] duration-500 md:ps-6 ${
               scrolled
                 ? 'bg-paper/80 text-ink shadow-[0_8px_30px_-12px_rgb(14_33_28/0.25)] ring-1 ring-ink/5 backdrop-blur-xl'
                 : 'bg-transparent text-ink'
@@ -111,13 +156,18 @@ export function Navbar() {
               <Logo name={t.brand.name} />
             </a>
 
-            <ul className="hidden items-center gap-1 lg:flex">
+            <ul className="relative hidden items-center gap-1 lg:flex">
+              <span ref={pillRef} aria-hidden className="pointer-events-none absolute inset-y-0 left-0 invisible rounded-full bg-ink/[0.07] ring-1 ring-ink/10" />
               {t.nav.links.map((l) => (
                 <li key={l.id}>
                   <a
+                    ref={(el) => {
+                      linkRefs.current[l.id] = el
+                    }}
                     href={`#${l.id}`}
                     onClick={(e) => go(e, l.id)}
-                    className={`relative rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors text-ink/75 hover:bg-ink/5 hover:text-ink`}
+                    aria-current={current === l.id ? 'true' : undefined}
+                    className={`relative block rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors hover:text-ink ${current === l.id ? 'text-ink' : 'text-ink/70'}`}
                   >
                     {l.label}
                   </a>
@@ -152,6 +202,11 @@ export function Navbar() {
                 <Menu className="size-5" aria-hidden />
               </button>
             </div>
+            <span
+              aria-hidden
+              className={`nav-progress pointer-events-none absolute inset-x-8 bottom-0 h-px bg-clay transition-opacity duration-500 ltr:origin-left rtl:origin-right ${scrolled ? 'opacity-100' : 'opacity-0'}`}
+              style={{ transform: 'scaleX(0)' }}
+            />
           </nav>
         </div>
       </header>

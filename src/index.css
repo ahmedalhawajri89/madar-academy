@@ -154,6 +154,63 @@ html.lenis body {
   mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
+/* ───────────── Cinema ───────────── */
+
+/* Scenes stack over the pinned hero: every later section paints above it */
+#main > section {
+  position: relative;
+  z-index: 1;
+}
+.hero-shell {
+  position: relative;
+  z-index: 0;
+}
+
+/* Chapter title card (built by src/lib/travel.ts) */
+.title-card {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  pointer-events: none;
+}
+.title-card .tc-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: 1.5rem;
+  text-align: center;
+}
+.title-card .tc-kicker {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: var(--color-lime);
+}
+.title-card .tc-mask {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.12em;
+}
+.title-card .tc-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 8vw, 6.5rem);
+  line-height: 1.2;
+}
+.title-card .tc-line {
+  display: block;
+  width: min(220px, 40vw);
+  height: 2px;
+  background: var(--color-clay);
+}
+
 /* SplitText line masks: a little breathing room so Arabic ascenders/descenders aren't clipped */
 .split-line-mask {
   padding-block: 0.12em;

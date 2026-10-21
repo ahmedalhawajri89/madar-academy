@@ -39,7 +39,7 @@ export function Stats() {
   )
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden bg-pine py-24 text-paper md:py-32">
+    <section id="impact" data-expand ref={ref} className="relative isolate overflow-hidden bg-pine py-24 text-paper md:py-32">
       <svg aria-hidden viewBox="0 0 600 600" className="stats-orbit absolute -end-48 -top-48 -z-10 size-[600px] text-lime/25 md:-end-24">
         <circle cx="300" cy="300" r="290" fill="none" stroke="currentColor" />
         <circle cx="300" cy="300" r="210" fill="none" stroke="currentColor" strokeDasharray="4 10" />

@@ -1,7 +1,7 @@
 import { useRef, type MouseEvent, type ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { gsap, MQ, useGSAP } from '../../lib/gsap'
-import { scrollToId } from '../../lib/scroll'
+import { useTravel } from '../../hooks/useTravel'
 
 type Variant = 'lime' | 'dark' | 'ghost' | 'ghostLight' | 'paper'
 
@@ -41,6 +41,7 @@ export function Button({
   external,
 }: Props) {
   const ref = useRef<HTMLAnchorElement & HTMLButtonElement>(null)
+  const travel = useTravel()
   const v = variants[variant]
 
   // Magnetic pull toward the cursor (fine pointers only, never with reduced motion)
@@ -98,7 +99,7 @@ export function Button({
       onClick?.()
       if (href.startsWith('#')) {
         e.preventDefault()
-        scrollToId(href.slice(1))
+        travel(href.slice(1))
       }
     }
     return (

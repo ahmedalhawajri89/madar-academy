@@ -72,6 +72,24 @@ export const shared = {
 const ar = {
   brand: { name: 'مدار', full: 'أكاديمية مدار للتدريب والتطوير', short: 'أكاديمية مدار' },
   skip: 'تخطَّ إلى المحتوى',
+  /** The page as a film: each section is a chapter (ids must match section ids) */
+  chapters: [
+    { id: 'top', label: 'البداية' },
+    { id: 'why', label: 'لماذا مدار' },
+    { id: 'tracks', label: 'المسارات' },
+    { id: 'courses', label: 'الدورات' },
+    { id: 'journey', label: 'رحلتك' },
+    { id: 'impact', label: 'أثرنا' },
+    { id: 'trainers', label: 'المدرّبون' },
+    { id: 'testimonials', label: 'قصص النجاح' },
+    { id: 'cohorts', label: 'الدفعات القادمة' },
+    { id: 'pricing', label: 'الباقات' },
+    { id: 'faq', label: 'الأسئلة' },
+    { id: 'contact', label: 'ابدأ الآن' },
+  ],
+  chapterWord: 'الفصل',
+  intro: 'رحلتك تبدأ هنا',
+  cursor: { view: 'التفاصيل', profile: 'الملف', explore: 'استكشف' },
   nav: {
     links: [
       { id: 'courses', label: 'الدورات' },
@@ -328,6 +346,23 @@ export type Content = typeof ar
 const en: Content = {
   brand: { name: 'Madar', full: 'Madar Academy for Training & Development', short: 'Madar Academy' },
   skip: 'Skip to content',
+  chapters: [
+    { id: 'top', label: 'Opening' },
+    { id: 'why', label: 'Why Madar' },
+    { id: 'tracks', label: 'Tracks' },
+    { id: 'courses', label: 'Courses' },
+    { id: 'journey', label: 'Journey' },
+    { id: 'impact', label: 'Impact' },
+    { id: 'trainers', label: 'Trainers' },
+    { id: 'testimonials', label: 'Stories' },
+    { id: 'cohorts', label: 'Cohorts' },
+    { id: 'pricing', label: 'Plans' },
+    { id: 'faq', label: 'FAQ' },
+    { id: 'contact', label: 'Start now' },
+  ],
+  chapterWord: 'Chapter',
+  intro: 'Your journey starts here',
+  cursor: { view: 'View', profile: 'Profile', explore: 'Explore' },
   nav: {
     links: [
       { id: 'courses', label: 'Courses' },

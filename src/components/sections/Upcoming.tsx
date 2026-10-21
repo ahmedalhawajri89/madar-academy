@@ -54,7 +54,7 @@ export function Upcoming() {
   )
 
   return (
-    <section ref={ref} className="bg-paper py-24 md:py-32">
+    <section id="cohorts" ref={ref} className="bg-paper py-24 md:py-32">
       <div className="container-x">
         <SectionHeading eyebrow={u.eyebrow} title={u.title} sub={u.sub} />
 

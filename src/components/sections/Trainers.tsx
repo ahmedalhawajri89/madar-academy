@@ -20,8 +20,9 @@ export function Trainers() {
         <ul data-reveal-group className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {tr.items.map((p, i) => (
             <li key={p.name} className="group">
-              <article className="h-full rounded-[var(--radius-card)] bg-paper p-3 ring-1 ring-line transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1.5">
-                <div className={`relative aspect-[4/4.4] overflow-hidden rounded-[1.25rem] ${tints[i]}`}>
+              <article data-cursor={t.cursor.profile} className="h-full rounded-[var(--radius-card)] bg-paper p-3 ring-1 ring-line transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1.5">
+                <div data-mask className={`relative aspect-[4/4.4] overflow-hidden rounded-[1.25rem] ${tints[i]}`}>
+                  <div data-mask-inner className="size-full">
                   <Photo
                     src={shared.trainerPhotos[i]}
                     alt={p.name}
@@ -29,6 +30,7 @@ export function Trainers() {
                     height={440}
                     className="size-full object-cover grayscale-[35%] transition-[transform,filter] duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105 group-hover:grayscale-0"
                   />
+                  </div>
                   <span className="absolute start-3 top-3 rounded-full bg-paper/95 px-3 py-1 text-xs font-semibold">{p.exp}</span>
                   <a
                     href="#"

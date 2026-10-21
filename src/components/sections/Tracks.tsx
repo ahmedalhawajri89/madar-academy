@@ -4,7 +4,7 @@ import { useLang } from '../../i18n/LangContext'
 import { shared } from '../../i18n/content'
 import { useSectionMotion } from '../../hooks/useSectionMotion'
 import { gsap, MQ, useGSAP } from '../../lib/gsap'
-import { scrollToId } from '../../lib/scroll'
+import { useTravel } from '../../hooks/useTravel'
 import { Button } from '../ui/Button'
 import { categoryIcon } from '../ui/Icons'
 import { SectionHeading } from '../ui/SectionHeading'
@@ -12,6 +12,7 @@ import { SectionHeading } from '../ui/SectionHeading'
 export function Tracks() {
   const { t, sign } = useLang()
   const tr = t.tracks
+  const travel = useTravel()
   const ref = useRef<HTMLElement>(null)
   useSectionMotion(ref)
 
@@ -23,6 +24,10 @@ export function Tracks() {
 
       // Desktop: pin the section and translate the track horizontally, following the reading direction.
       mm.add(MQ.desktop, () => {
+        const cards = gsap.utils.toArray<HTMLElement>('.track-card')
+        const skewCards = gsap.quickSetter(cards, 'skewX', 'deg') as (v: number) => void
+        const clampSkew = gsap.utils.clamp(-9, 9)
+        const lean = { skew: 0 }
         const distance = () => Math.max(0, track.scrollWidth - document.documentElement.clientWidth)
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -33,6 +38,14 @@ export function Tracks() {
             scrub: 1,
             invalidateOnRefresh: true,
             anticipatePin: 1,
+            // Velocity skew: cards lean into fast scrolling, then settle back
+            onUpdate: (self) => {
+              const s = clampSkew((self.getVelocity() / -150) * sign)
+              if (Math.abs(s) > Math.abs(lean.skew)) {
+                lean.skew = s
+                gsap.to(lean, { skew: 0, duration: 0.9, ease: 'power3.out', overwrite: true, onUpdate: () => skewCards(lean.skew) })
+              }
+            },
           },
         })
         tl.to(track, { x: () => -distance() * sign, ease: 'none' }, 0).fromTo('.h-progress', { scaleX: 0 }, { scaleX: 1, ease: 'none' }, 0)
@@ -81,6 +94,7 @@ export function Tracks() {
               return (
                 <li
                   key={track.id}
+                  data-cursor={t.cursor.explore}
                   className="track-card group flex w-[82vw] max-w-[380px] shrink-0 snap-start flex-col rounded-[var(--radius-card)] p-6 sm:w-[360px] md:p-7 lg:w-[400px]"
                   style={{ backgroundColor: track.bg, color: track.fg }}
                 >
@@ -124,7 +138,7 @@ export function Tracks() {
                     href="#contact"
                     onClick={(e) => {
                       e.preventDefault()
-                      scrollToId('contact')
+                      travel('contact')
                     }}
                     className="mt-auto inline-flex items-center gap-2 pt-10 font-display font-semibold"
                   >
