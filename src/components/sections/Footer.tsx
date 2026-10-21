@@ -1,18 +1,58 @@
-import { useState, type FormEvent, type MouseEvent } from 'react'
+import { useRef, useState, type FormEvent, type MouseEvent } from 'react'
 import { ArrowUp, Mail, MapPin, Phone } from 'lucide-react'
 import { useLang } from '../../i18n/LangContext'
 import { shared } from '../../i18n/content'
-import { scrollToId } from '../../lib/scroll'
+import { useTravel } from '../../hooks/useTravel'
+import { gsap, MQ, SplitText, useGSAP } from '../../lib/gsap'
 import { Logo, Social } from '../ui/Icons'
 
 export function Footer() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const f = t.footer
+  const ref = useRef<HTMLElement>(null)
+
+  // End credits: the footer rises from under the last scene, columns roll in,
+  // and the oversized wordmark lifts into frame as you reach the very end.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add(MQ.motion, () => {
+        const footer = ref.current!
+        gsap.from('.credits', {
+          yPercent: -22,
+          ease: 'none',
+          scrollTrigger: { trigger: footer, start: 'top bottom', end: 'bottom bottom', scrub: true },
+        })
+        gsap.from('.credits-cols > *', {
+          y: 50,
+          autoAlpha: 0,
+          stagger: 0.1,
+          duration: 1.1,
+          ease: 'madar.out',
+          scrollTrigger: { trigger: footer, start: 'top 75%', once: true },
+        })
+        // Arabic letters must stay joined, so the Arabic wordmark moves as one word
+        const split = SplitText.create('.credits-mark', { type: lang === 'ar' ? 'words' : 'chars' })
+        gsap.from(lang === 'ar' ? split.words : split.chars, {
+          yPercent: 70,
+          scaleY: 1.4,
+          autoAlpha: 0,
+          stagger: 0.06,
+          ease: 'none',
+          transformOrigin: '50% 100%',
+          scrollTrigger: { trigger: '.credits-mark', start: 'top bottom', end: 'bottom bottom', scrub: 0.8 },
+        })
+      })
+      return () => mm.revert()
+    },
+    { scope: ref },
+  )
+  const travel = useTravel()
   const [subscribed, setSubscribed] = useState(false)
 
   const go = (e: MouseEvent, id: string) => {
     e.preventDefault()
-    scrollToId(id)
+    travel(id)
   }
   const subscribe = (e: FormEvent) => {
     e.preventDefault()
@@ -20,9 +60,9 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative overflow-hidden bg-ink pb-28 pt-20 text-paper/75 lg:pb-10">
-      <div className="container-x">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
+    <footer ref={ref} className="relative overflow-hidden bg-ink pb-28 pt-20 text-paper/75 lg:pb-10">
+      <div className="credits container-x">
+        <div className="credits-cols grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
           <div>
             <Logo name={t.brand.name} tone="light" />
             <p className="mt-5 max-w-xs text-sm leading-relaxed">{f.about}</p>
@@ -84,7 +124,7 @@ export function Footer() {
         </div>
 
         {/* Oversized wordmark */}
-        <p aria-hidden className="pointer-events-none mt-16 select-none text-center font-display text-[clamp(5rem,22vw,18rem)] font-extrabold leading-[0.85] text-transparent [-webkit-text-stroke:1px_rgb(255_252_244/0.12)]">
+        <p aria-hidden className="credits-mark pointer-events-none mt-16 select-none text-center font-display text-[clamp(5rem,22vw,18rem)] font-extrabold leading-[0.85] text-transparent [-webkit-text-stroke:1px_rgb(255_252_244/0.12)]">
           {t.brand.name}
         </p>
 

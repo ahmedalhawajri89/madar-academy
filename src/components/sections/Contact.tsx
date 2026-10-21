@@ -102,7 +102,7 @@ export function Contact() {
   const aria = (k: keyof Values) => ({ 'aria-invalid': !!errors[k], 'aria-describedby': errors[k] ? `f-${k}-error` : undefined })
 
   return (
-    <section id="contact" ref={ref} className="relative isolate overflow-hidden bg-ink py-24 text-paper md:py-32">
+    <section id="contact" data-expand ref={ref} className="relative isolate overflow-hidden bg-ink py-24 text-paper md:py-32">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="cta-blob absolute -top-32 start-[-10%] size-[520px] rounded-full bg-pine blur-[110px]" />
         <div className="cta-blob absolute bottom-[-25%] end-[10%] size-[440px] rounded-full bg-lime/20 blur-[110px]" />

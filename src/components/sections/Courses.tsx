@@ -4,7 +4,7 @@ import { useLang } from '../../i18n/LangContext'
 import { shared, type CategoryId } from '../../i18n/content'
 import { useSectionMotion } from '../../hooks/useSectionMotion'
 import { Flip, gsap, prefersReducedMotion } from '../../lib/gsap'
-import { scrollToId } from '../../lib/scroll'
+import { useTravel } from '../../hooks/useTravel'
 import { Button } from '../ui/Button'
 import { categoryIcon } from '../ui/Icons'
 import { SectionHeading } from '../ui/SectionHeading'
@@ -18,7 +18,8 @@ function Cover({ cat, seed }: { cat: CategoryId; seed: number }) {
   const light = cat === 'marketing'
   const cx = 60 + ((seed * 47) % 240)
   return (
-    <div className="relative aspect-[16/10] overflow-hidden rounded-[1.25rem]" style={{ backgroundColor: color }}>
+    <div data-mask className="relative aspect-[16/10] overflow-hidden rounded-[1.25rem]" style={{ backgroundColor: color }}>
+      <div data-mask-inner className="absolute inset-0">
       <svg aria-hidden viewBox="0 0 400 250" className={`absolute inset-0 size-full transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-110 group-hover:rotate-3 ${light ? 'text-ink/15' : 'text-paper/15'}`}>
         <circle cx={cx} cy="250" r="90" fill="none" stroke="currentColor" strokeWidth="1.5" />
         <circle cx={cx} cy="250" r="150" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 7" />
@@ -26,6 +27,7 @@ function Cover({ cat, seed }: { cat: CategoryId; seed: number }) {
         <circle cx={cx + 150} cy="250" r="7" fill="#CDEF6A" />
         <circle cx={cx - 64} cy="186" r="5" fill={light ? '#0E211C' : '#F4EFE4'} />
       </svg>
+      </div>
       <span className={`absolute start-5 top-5 grid size-14 place-items-center rounded-2xl backdrop-blur-md ${light ? 'bg-ink/10 text-ink' : 'bg-paper/15 text-paper'}`}>
         <Icon className="size-6" aria-hidden />
       </span>
@@ -36,6 +38,7 @@ function Cover({ cat, seed }: { cat: CategoryId; seed: number }) {
 export function Courses() {
   const { t, lang } = useLang()
   const c = t.courses
+  const travel = useTravel()
   const ref = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLUListElement>(null)
   const flipState = useRef<ReturnType<typeof Flip.getState> | null>(null)
@@ -101,7 +104,7 @@ export function Courses() {
             const shown = filter === 'all' || course.cat === filter
             return (
               <li key={course.id} data-flip-id={course.id} className={`course-card ${shown ? '' : 'hidden'}`}>
-                <article className="group flex h-full flex-col rounded-[var(--radius-card)] bg-paper p-3 ring-1 ring-line transition-[transform,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:shadow-[0_24px_60px_-24px_rgb(14_33_28/0.35)]">
+                <article data-cursor={t.cursor.view} className="group flex h-full flex-col rounded-[var(--radius-card)] bg-paper p-3 ring-1 ring-line transition-[transform,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:shadow-[0_24px_60px_-24px_rgb(14_33_28/0.35)]">
                   <div className="relative">
                     <Cover cat={course.cat} seed={i} />
                     <span className="absolute end-4 top-4 rounded-full bg-paper/95 px-3 py-1 text-xs font-semibold text-ink">{t.labels.mode[course.mode]}</span>
@@ -130,7 +133,7 @@ export function Courses() {
                         href="#contact"
                         onClick={(e) => {
                           e.preventDefault()
-                          scrollToId('contact')
+                          travel('contact')
                         }}
                         aria-label={`${c.details}: ${c.items[course.id]}`}
                         className="inline-flex h-11 items-center gap-2 rounded-full bg-ink ps-4 pe-3 text-sm font-semibold text-paper transition-colors hover:bg-pine"

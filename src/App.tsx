@@ -16,6 +16,9 @@ import { FAQ } from './components/sections/FAQ'
 import { Contact } from './components/sections/Contact'
 import { Footer } from './components/sections/Footer'
 import { Floating } from './components/sections/Floating'
+import { Preloader } from './components/cinema/Preloader'
+import { ChapterHUD } from './components/cinema/ChapterHUD'
+import { Cursor } from './components/cinema/Cursor'
 
 export default function App() {
   const { lang, t } = useLang()
@@ -27,6 +30,7 @@ export default function App() {
       <a href="#main" className="sr-only z-[70] rounded-full bg-lime px-5 py-3 font-semibold text-ink focus:not-sr-only focus:fixed focus:start-4 focus:top-4">
         {t.skip}
       </a>
+      <Preloader />
       <Navbar />
       <main id="main">
         <Hero />
@@ -45,6 +49,8 @@ export default function App() {
       </main>
       <Footer />
       <Floating />
+      <ChapterHUD />
+      <Cursor />
     </div>
   )
 }

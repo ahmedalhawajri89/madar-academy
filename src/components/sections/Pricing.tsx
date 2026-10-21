@@ -12,7 +12,7 @@ export function Pricing() {
   useSectionMotion(ref)
 
   return (
-    <section ref={ref} className="bg-ivory py-24 md:py-32">
+    <section id="pricing" ref={ref} className="bg-ivory py-24 md:py-32">
       <div className="container-x">
         <SectionHeading eyebrow={p.eyebrow} title={p.title} sub={p.sub} align="center" />
 
