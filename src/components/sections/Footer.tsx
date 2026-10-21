@@ -3,16 +3,17 @@ import { ArrowUp, Mail, MapPin, Phone } from 'lucide-react'
 import { useLang } from '../../i18n/LangContext'
 import { shared } from '../../i18n/content'
 import { useTravel } from '../../hooks/useTravel'
-import { gsap, MQ, SplitText, useGSAP } from '../../lib/gsap'
+import { gsap, MQ, useGSAP } from '../../lib/gsap'
+import { Wordmark } from '../cinema/Wordmark'
 import { Logo, Social } from '../ui/Icons'
 
 export function Footer() {
-  const { t, lang } = useLang()
+  const { t } = useLang()
   const f = t.footer
   const ref = useRef<HTMLElement>(null)
 
   // End credits: the footer rises from under the last scene, columns roll in,
-  // and the oversized wordmark lifts into frame as you reach the very end.
+  // and the living wordmark (see Wordmark.tsx) closes the film.
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
@@ -30,17 +31,6 @@ export function Footer() {
           duration: 1.1,
           ease: 'madar.out',
           scrollTrigger: { trigger: footer, start: 'top 75%', once: true },
-        })
-        // Arabic letters must stay joined, so the Arabic wordmark moves as one word
-        const split = SplitText.create('.credits-mark', { type: lang === 'ar' ? 'words' : 'chars' })
-        gsap.from(lang === 'ar' ? split.words : split.chars, {
-          yPercent: 70,
-          scaleY: 1.4,
-          autoAlpha: 0,
-          stagger: 0.06,
-          ease: 'none',
-          transformOrigin: '50% 100%',
-          scrollTrigger: { trigger: '.credits-mark', start: 'top bottom', end: 'bottom bottom', scrub: 0.8 },
         })
       })
       return () => mm.revert()
@@ -124,9 +114,7 @@ export function Footer() {
         </div>
 
         {/* Oversized wordmark */}
-        <p aria-hidden className="credits-mark pointer-events-none mt-16 select-none text-center font-display text-[clamp(5rem,22vw,18rem)] font-extrabold leading-[0.85] text-transparent [-webkit-text-stroke:1px_rgb(255_252_244/0.12)]">
-          {t.brand.name}
-        </p>
+        <Wordmark />
 
         <div className="mt-10 flex flex-col-reverse items-start justify-between gap-5 border-t border-paper/10 pt-6 text-xs sm:flex-row sm:items-center">
           <p>{f.rights}</p>
