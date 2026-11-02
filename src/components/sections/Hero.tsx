@@ -232,7 +232,7 @@ export function Hero() {
             <Eyebrow>{h.eyebrow}</Eyebrow>
           </div>
 
-          <h1 className="mt-6 font-display text-[clamp(2.7rem,6.6vw,5.6rem)] font-extrabold leading-[1.2] text-ink ltr:leading-[1.04]">
+          <h1 className="mt-6 font-display text-[clamp(1.75rem,10vw_-_2px,2.7rem)] font-extrabold sm:text-[clamp(2.7rem,6.6vw,5.6rem)] leading-[1.2] text-ink ltr:leading-[1.04]">
             <span className="sr-only">{h.srTitle}</span>
             <span aria-hidden>
               <span className="block overflow-hidden py-[0.06em]">
@@ -298,7 +298,7 @@ export function Hero() {
             <canvas ref={canvasRef} aria-hidden className="absolute inset-0 size-full" />
           </div>
 
-          <div className="hero-ui mx-auto mt-3 flex max-w-[600px] items-center justify-between gap-4">
+          <div className="hero-ui mx-auto mt-3 flex max-w-[600px] items-center flex-wrap justify-between gap-4">
             <p aria-hidden dir="ltr" className="hero-caption whitespace-nowrap font-mono text-[0.7rem] sm:min-w-[17ch] sm:text-xs font-semibold tracking-[0.18em] text-ink/70">
               [ 01 ] {h.captions[0]}
             </p>
