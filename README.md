@@ -2,6 +2,8 @@
 
 A responsive, Arabic-first (RTL) landing page for a training center, with full English (LTR) support. Built with **React** and **GSAP**.
 
+**Live demo:** [madaracademy.vercel.app](https://madaracademy.vercel.app/)
+
 > All content is placeholder data (name, courses, trainers, photos, WhatsApp number). It lives in one file: [`src/i18n/content.ts`](src/i18n/content.ts).
 
 ## Tech stack
