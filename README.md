@@ -1,36 +1,49 @@
-# أكاديمية مدار — صفحة الهبوط (Madar Academy Landing Page)
+# Madar Academy — Landing Page
 
-صفحة هبوط عربية أولًا (RTL) ومتجاوبة لمركز تدريبي، مبنية بـ **React + GSAP**، مع دعم كامل للإنجليزية (LTR).
+A responsive, Arabic-first (RTL) landing page for a training center, with full English (LTR) support. Built with **React** and **GSAP**.
 
-> البيانات الحالية تجريبية (الاسم، الدورات، المدربون، الصور، رقم واتساب) — كلها في ملف واحد: [`src/i18n/content.ts`](src/i18n/content.ts).
+> All content is placeholder data (name, courses, trainers, photos, WhatsApp number). It lives in one file: [`src/i18n/content.ts`](src/i18n/content.ts).
 
-## التقنيات
+## Tech stack
 
 - **Vite + React 19 + TypeScript**
-- **Tailwind CSS v4** — الألوان والخطوط كـ tokens في [`src/index.css`](src/index.css)
-- **GSAP 3** مع `@gsap/react`: ScrollTrigger · SplitText · Flip · DrawSVG · ScrambleText
-- **Lenis** للتمرير الناعم · **lucide-react** للأيقونات · **react-hook-form** للنموذج
+- **Tailwind CSS v4** — colors and fonts are defined as tokens in [`src/index.css`](src/index.css)
+- **GSAP 3** with `@gsap/react` — ScrollTrigger, SplitText, Flip, DrawSVG, ScrambleText
+- **Lenis** (smooth scrolling), **lucide-react** (icons), **react-hook-form** (forms)
 
-## أبرز التفاصيل
+## Highlights
 
-- **Hero بجسيمات تتشكّل** (Canvas): ~2,600 جسيم تتحوّل بين أشكال المجالات بالتزامن مع الكلمة المتبدّلة في العنوان، تتفادى المؤشر، وتتبعثر مع التمرير — [`src/lib/particles.ts`](src/lib/particles.ts)
-- مسارات مهنية بتمرير أفقي مثبّت، فلترة الدورات بـ Flip، مسار رحلة يُرسم مع التمرير، عدّادات، عرض شرائح قابل للوصول، نموذج تسجيل من 3 خطوات
-- كل الحركات تحترم `prefers-reduced-motion`، والاتجاه الأفقي ينعكس تلقائيًا بين العربية والإنجليزية
+- **Particle hero** — about 2,600 canvas particles morph between course-field shapes in sync with the rotating headline word, avoid the cursor, and scatter on scroll ([`src/lib/particles.ts`](src/lib/particles.ts))
+- Pinned horizontal career tracks, Flip-filtered courses, a scroll-drawn journey path, counters, an accessible carousel, and a 3-step enrollment form
+- Every animation respects `prefers-reduced-motion`
+- Layout direction mirrors automatically between Arabic and English
 
-## التشغيل محليًا
+## Getting started
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # نسخة الإنتاج في dist/
+npm run build    # production build in dist/
 ```
 
-## النشر على Vercel
+## Project structure
 
-المشروع يعمل على Vercel دون إعدادات إضافية: Framework **Vite**، أمر البناء `npm run build`، ومجلد الإخراج `dist`.
+```
+src/
+  components/
+    sections/   page sections (Hero, Courses, Contact, ...)
+    cinema/     motion pieces: preloader, cursor, chapter HUD, wordmark
+    ui/         shared UI pieces (Button, icons, headings)
+  i18n/         Arabic and English content + language context
+  lib/          GSAP setup, particle engine, scroll helpers
+```
 
-## قبل الإطلاق الفعلي
+## Deploying to Vercel
 
-- استبدال البيانات والصور التجريبية في `src/i18n/content.ts`
-- ربط نموذج التسجيل (`src/components/sections/Contact.tsx`) والنشرة البريدية بـ API أو CRM
-- وضع رقم واتساب الحقيقي (`shared.whatsapp`)
+Works with no extra configuration: framework **Vite**, build command `npm run build`, output directory `dist`.
+
+## Before going live
+
+- Replace the placeholder content and images in `src/i18n/content.ts`
+- Connect the enrollment form (`src/components/sections/Contact.tsx`) and the newsletter to an API or CRM
+- Set the real WhatsApp number (`shared.whatsapp`)
